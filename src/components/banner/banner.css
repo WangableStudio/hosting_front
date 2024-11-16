@@ -1,0 +1,63 @@
+.banner {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.banner-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.banner-content {
+    z-index: 1;
+    color: white;
+}
+
+.banner-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 2px solid #fff;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #333;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+/* Эффект при фокусе на поле ввода */
+.banner-input:focus {
+    border-color: #4caf50; /* Цвет границы при фокусе */
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5); /* Тень при фокусе */
+}
+
+/* Плейсхолдер стиль */
+.banner-input::placeholder {
+    color: #333;
+    font-style: italic;
+}
+
+
+
+@media(max-width:500px){
+    .banner{
+        height: 200px;
+    }
+    .banner-background.image {
+        transform: translate3d(-112px, -51.52px, 0px);
+        position: absolute;
+        height: 251px;
+        width: 602px;
+        max-width: none;
+    }
+}
