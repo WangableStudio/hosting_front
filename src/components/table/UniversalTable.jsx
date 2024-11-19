@@ -129,7 +129,7 @@ export default function StickyHeadTable({ rows, columns }) {
                 ? `${host}/api/v1/user/${selectedRow.id}/user`
                 : location.pathname === '/category'
                     ? `${host}/api/v1/category/${selectedRow.id}/category`
-                    : location.pathname === '/ph' || location.pathname === '/vd' ? `${host}/api/v1/media/${selectedRow.id}/media` : `${host}/api/v1/attribute/${selectedRow.id}/attribute`;
+                    : location.pathname === '/ph' || location.pathname === '/vd' ? `${host}/api/v1/media/${selectedRow.id}/media` : location.pathname === '/user/ph' || location.pathname === '/user/vd' ?  `${host}/api/v1/media/${selectedRow.id}/media` : `${host}/api/v1/attribute/${selectedRow.id}/attribute`;
 
             await axios.delete(apiEndpoint, {
                 headers: {
@@ -154,14 +154,14 @@ export default function StickyHeadTable({ rows, columns }) {
                     ? `${host}/api/v1/category/${selectedRow.id}/category`
                     : location.pathname === '/ph' || location.pathname === '/vd'
                         ? `${host}/api/v1/media/${selectedRow.id}/media`
-                        : `${host}/api/v1/attribute/${selectedRow.id}/attribute`;
+                        : location.pathname === '/user/vd' || location.pathname === '/user/ph' ? `${host}/api/v1/media/${selectedRow.id}/media` : `${host}/api/v1/attribute/${selectedRow.id}/attribute`;
 
             let payload;
             let headers = {
                 Authorization: `Bearer ${token}`,
             };
 
-            if (location.pathname === '/ph' || location.pathname === '/vd') {
+            if (location.pathname === '/ph' || location.pathname === '/vd' || location.pathname === '/user/vd' || location.pathname === '/user/ph') {
                 const formData = new FormData();
                 formData.append('type', type);
                 formData.append('city', city);
