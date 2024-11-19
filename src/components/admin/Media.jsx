@@ -85,6 +85,7 @@ const Media = () => {
         setOpenModal(true);
     }
     const handleSave = () => {
+        setLoading(true);
         const formData = new FormData();
 
         formData.append('type', type);

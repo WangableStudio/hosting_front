@@ -10,6 +10,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import styled from '@emotion/styled';
 import { useLocation } from 'react-router-dom';
 import UserNavbar from './navbar/UserNavbar';
+import LoadingIndicator from '../LoadingIndicator';
 
 const columns = [
     { id: 'id', label: 'ID', minWidth: 100 },
@@ -50,19 +51,22 @@ const UserMedia = () => {
     const [responsible, setResponsible] = useState('')
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(true)
         axios.get(`${host}/api/v1/attribute`).then((response) => {
             setAttributes(response.data)
+            axios.get(`${host}/api/v1/category`).then((response) => {
+                setCategories(response.data)
+                setLoading(false)
+            }).catch(error => {
+                console.log(error);
+            })
         }).catch(error => {
             console.log(error);
         })
 
-        axios.get(`${host}/api/v1/category`).then((response) => {
-            setCategories(response.data)
-        }).catch(error => {
-            console.log(error);
-        })
     }, [])
 
     useEffect(() => {
@@ -82,6 +86,7 @@ const UserMedia = () => {
         setOpenModal(true);
     }
     const handleSave = () => {
+        setLoading(true)
         const formData = new FormData();
 
         formData.append('type', type);
@@ -112,7 +117,7 @@ const UserMedia = () => {
     }
 
     return (
-        <>
+        <LoadingIndicator loading={loading}>
             <UserNavbar />
             <div className="container">
                 <Box sx={{
@@ -320,7 +325,7 @@ const UserMedia = () => {
                     </Button>
                 </Paper>
             </Modal>
-        </>
+            </LoadingIndicator>
     )
 }
 

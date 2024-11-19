@@ -21,6 +21,7 @@ import { toast } from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
 import { Card, FormControl, InputLabel, Select, Typography } from '@mui/material';
 import styled from '@emotion/styled';
+import LoadingIndicator from '../LoadingIndicator';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -60,6 +61,7 @@ export default function StickyHeadTable({ rows, columns }) {
     const [image, setImage] = useState('');
     const [preview, setPreview] = useState(null);
     const [haveImage, setHaveImage] = useState(true)
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         axios.get(`${host}/api/v1/category`)
@@ -95,7 +97,7 @@ export default function StickyHeadTable({ rows, columns }) {
     };
 
     const handleEditClick = () => {
-        setType(selectedRow.type) 
+        setType(selectedRow.type)
         setEditName(selectedRow.name);
         setEditStatus(selectedRow.status);
         setEditCategory(selectedRow.categoryId)
@@ -110,7 +112,7 @@ export default function StickyHeadTable({ rows, columns }) {
         setResponsible(selectedRow.responsible)
         setOpenModal(true);
         handleMenuClose();
-        { 
+        {
             location.pathname == '/ph'
                 ?
                 setFile(selectedRow.photo)
@@ -120,12 +122,9 @@ export default function StickyHeadTable({ rows, columns }) {
         }
     };
 
-    useEffect(() => {
-        console.log(file);
-    }, [file])
-
     const handleDeleteClick = async () => {
         try {
+            setLoading(true)
             const apiEndpoint = location.pathname === '/users'
                 ? `${host}/api/v1/user/${selectedRow.id}/user`
                 : location.pathname === '/category'
@@ -148,6 +147,7 @@ export default function StickyHeadTable({ rows, columns }) {
 
     const handleSave = async () => {
         try {
+            setLoading(true)
             const apiEndpoint = location.pathname === '/users'
                 ? `${host}/api/v1/user/${selectedRow.id}/user`
                 : location.pathname === '/category'
@@ -219,133 +219,123 @@ export default function StickyHeadTable({ rows, columns }) {
     };
 
     return (
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: 440 }}>
-                <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            {columns.map((column) => (
-                                <TableCell
-                                    key={column.id}
-                                    align={column.align}
-                                    style={{ minWidth: column.minWidth }}
-                                >
-                                    {column.label}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {rows
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => (
-                                <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                                    {columns.map((column) => {
-                                        if (column.id === 'actions') {
+        <LoadingIndicator loading={loading}>
+            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                <TableContainer sx={{ maxHeight: 440 }}>
+                    <Table stickyHeader aria-label="sticky table">
+                        <TableHead>
+                            <TableRow>
+                                {columns.map((column) => (
+                                    <TableCell
+                                        key={column.id}
+                                        align={column.align}
+                                        style={{ minWidth: column.minWidth }}
+                                    >
+                                        {column.label}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => (
+                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                        {columns.map((column) => {
+                                            if (column.id === 'actions') {
+                                                return (
+                                                    <TableCell key={column.id} align={column.align}>
+                                                        <IconButton
+                                                            onClick={(event) => handleMenuClick(event, row)}
+                                                        >
+                                                            <MoreVertIcon />
+                                                        </IconButton>
+                                                        <Menu
+                                                            anchorEl={anchorEl}
+                                                            open={Boolean(anchorEl)}
+                                                            onClose={handleMenuClose}
+                                                        >
+                                                            <MenuItem onClick={handleEditClick}>Изменить</MenuItem>
+                                                            <MenuItem onClick={handleDeleteClick}>Удалить</MenuItem>
+                                                        </Menu>
+                                                    </TableCell>
+                                                );
+                                            }
+                                            if (column.id === 'categoryId') {
+                                                const category = categories.find(cat => cat.id === row.categoryId);
+                                                return (
+                                                    <TableCell key={column.id} align={column.align}>
+                                                        {category ? category.name : '-'}
+                                                    </TableCell>
+                                                );
+                                            }
+                                            if (column.id === 'attributeId') {
+                                                return (
+                                                    <TableCell key={column.id} align={column.align}>
+                                                        {row.attribute.name}
+                                                    </TableCell>
+                                                )
+                                            }
+                                            const value = row[column.id];
                                             return (
                                                 <TableCell key={column.id} align={column.align}>
-                                                    <IconButton
-                                                        onClick={(event) => handleMenuClick(event, row)}
-                                                    >
-                                                        <MoreVertIcon />
-                                                    </IconButton>
-                                                    <Menu
-                                                        anchorEl={anchorEl}
-                                                        open={Boolean(anchorEl)}
-                                                        onClose={handleMenuClose}
-                                                    >
-                                                        <MenuItem onClick={handleEditClick}>Изменить</MenuItem>
-                                                        <MenuItem onClick={handleDeleteClick}>Удалить</MenuItem>
-                                                    </Menu>
+                                                    {column.id === 'lastentry'
+                                                        ? formatDate(value) // Форматируем дату
+                                                        : value}
                                                 </TableCell>
                                             );
-                                        }
-                                        if (column.id === 'categoryId') {
-                                            const category = categories.find(cat => cat.id === row.categoryId);
-                                            return (
-                                                <TableCell key={column.id} align={column.align}>
-                                                    {category ? category.name : '-'}
-                                                </TableCell>
-                                            );
-                                        }
-                                        if (column.id === 'attributeId') {
-                                            return (
-                                                <TableCell key={column.id} align={column.align}>
-                                                    {row.attribute.name}
-                                                </TableCell>
-                                            )
-                                        }
-                                        const value = row[column.id];
-                                        return (
-                                            <TableCell key={column.id} align={column.align}>
-                                                {column.id === 'lastentry'
-                                                    ? formatDate(value) // Форматируем дату
-                                                    : value}
-                                            </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                            ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[10, 25, 100]}
-                component="div"
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+                                        })}
+                                    </TableRow>
+                                ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[10, 25, 100]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
 
-            <Modal sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflowY: 'auto',
-                paddingBottom: '50px'
-            }} open={openModal} onClose={() => setOpenModal(false)}>
-                <Paper sx={{ padding: 2, margin: 'auto', maxWidth: 400, marginTop: '10%' }}>
-                    <h2 style={{ marginBottom: '15px' }}>Изменить</h2>
-                    {location.pathname === '/users' &&
-                        <>
-                            <TextField
-                                fullWidth
-                                label="Имя"
-                                value={editName}
-                                onChange={(e) => setEditName(e.target.value)}
-                                sx={{ marginBottom: 2 }}
-                            />
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Роль</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={editStatus}
-                                    label="Роль"
-                                    onChange={(e) => setEditStatus(e.target.value)}
+                <Modal sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflowY: 'auto',
+                    paddingBottom: '50px'
+                }} open={openModal} onClose={() => setOpenModal(false)}>
+                    <Paper sx={{ padding: 2, margin: 'auto', maxWidth: 400, marginTop: '10%' }}>
+                        <h2 style={{ marginBottom: '15px' }}>Изменить</h2>
+                        {location.pathname === '/users' &&
+                            <>
+                                <TextField
+                                    fullWidth
+                                    label="Имя"
+                                    value={editName}
+                                    onChange={(e) => setEditName(e.target.value)}
                                     sx={{ marginBottom: 2 }}
-                                >
-                                    <MenuItem value={'ADMIN'}>АДМИН</MenuItem>
-                                    <MenuItem value={'AUDITOR'}>АУДИТОР</MenuItem>
-                                    <MenuItem value={'GUEST'}>ГОСТЬ</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </>
-                    }
-                    {location.pathname === '/category' &&
-                        <TextField
-                            fullWidth
-                            label="Название"
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                            sx={{ marginBottom: 2 }}
-                        />
-                    }
-                    {
-                        location.pathname === '/attribute' &&
-                        <>
+                                />
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Роль</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={editStatus}
+                                        label="Роль"
+                                        onChange={(e) => setEditStatus(e.target.value)}
+                                        sx={{ marginBottom: 2 }}
+                                    >
+                                        <MenuItem value={'ADMIN'}>АДМИН</MenuItem>
+                                        <MenuItem value={'AUDITOR'}>АУДИТОР</MenuItem>
+                                        <MenuItem value={'GUEST'}>ГОСТЬ</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </>
+                        }
+                        {location.pathname === '/category' &&
                             <TextField
                                 fullWidth
                                 label="Название"
@@ -353,137 +343,185 @@ export default function StickyHeadTable({ rows, columns }) {
                                 onChange={(e) => setEditName(e.target.value)}
                                 sx={{ marginBottom: 2 }}
                             />
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Роль</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={editCategory}
-                                    label="Роль"
-                                    onChange={(e) => setEditCategory(e.target.value)}
+                        }
+                        {
+                            location.pathname === '/attribute' &&
+                            <>
+                                <TextField
+                                    fullWidth
+                                    label="Название"
+                                    value={editName}
+                                    onChange={(e) => setEditName(e.target.value)}
                                     sx={{ marginBottom: 2 }}
-                                >
-                                    {categories.map(category => (
-                                        <MenuItem value={`${category.id}`}>{category.name}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </>
-                    }
-                    {
-                        (location.pathname === '/vd' || location.pathname === '/ph') &&
-                        <>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Тип завяки</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={type}
-                                    label="Тип завяки"
-                                    onChange={(e) => setType(e.target.value)}
-                                    sx={{ marginBottom: 2 }}
-                                >
-                                    <MenuItem value={'Брак'}>Брак</MenuItem>
-                                    <MenuItem value={'Недопоставка'}>Недопоставка</MenuItem>
-                                    <MenuItem value={'Пересорт'}>Пересорт</MenuItem>
-                                    <MenuItem value={'Обычный'}>Обычный</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Категория</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={categoryId}
-                                    label="Категория"
-                                    onChange={(e) => setCategoryId(e.target.value)}
-                                    sx={{ marginBottom: 2 }}
-                                >
-                                    {categories.map(category => (
-                                        <MenuItem value={category.id}>{category.name}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Аттребуты</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={attributeId}
-                                    label="Аттребуты"
-                                    onChange={(e) => setAttributeId(e.target.value)}
-                                    sx={{ marginBottom: 2 }}
-                                >
-                                    {attributes.map(category => (
-                                        <MenuItem value={category.id}>{category.name}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Город</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={city}
-                                    label="Город"
-                                    onChange={(e) => setCity(e.target.value)}
-                                    sx={{ marginBottom: 2 }}
-                                >
-                                    <MenuItem value={'Актобе'}>Актобе</MenuItem>
-                                    <MenuItem value={'Алмата'}>Алмата</MenuItem>
-                                    <MenuItem value={'Астана'}>Астана</MenuItem>
-                                    <MenuItem value={'Караганда'}>Караганда</MenuItem>
-                                    <MenuItem value={'Костанай'}>Костанай</MenuItem>
-                                    <MenuItem value={'Павлодар'}>Павлодар</MenuItem>
-                                    <MenuItem value={'Семей'}>Семей</MenuItem>
-                                    <MenuItem value={'Усть-Каменогорск'}>Усть-Каменогорск</MenuItem>
-                                    <MenuItem value={'Шымкент'}>Шымкент</MenuItem>
-                                    <MenuItem value={'Экибастуз'}>Экибастуз</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <TextField
-                                fullWidth
-                                label="Номер тр. Единицы"
-                                value={units}
-                                onChange={(e) => setUnits(e.target.value)}
-                                sx={{ marginBottom: 2 }}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Поставщик"
-                                value={supplier}
-                                onChange={(e) => setSupplier(e.target.value)}
-                                sx={{ marginBottom: 2 }}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Сопр. Документы"
-                                value={doc}
-                                onChange={(e) => setDoc(e.target.value)}
-                                sx={{ marginBottom: 2 }}
-                            />
-                            <TextField
-                                fullWidth
-                                disabled
-                                label="Формат"
-                                value={format == 'video' ? 'Видео' : 'Фото'}
-                                onChange={(e) => setFormat(e.target.value)}
-                                sx={{ marginBottom: 2 }}
-                            />
-                            {format == 'video' ? (
-                                haveImage ? (
-                                    <video
-                                        style={{ width: '100%', paddingBottom: '2rem' }}
-                                        controls
-                                        poster={host + preview}
+                                />
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Роль</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={editCategory}
+                                        label="Роль"
+                                        onChange={(e) => setEditCategory(e.target.value)}
+                                        sx={{ marginBottom: 2 }}
                                     >
-                                        <source
-                                            src={host + file}
-                                            type="video/mp4"
-                                        />
-                                    </video>
+                                        {categories.map(category => (
+                                            <MenuItem value={`${category.id}`}>{category.name}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </>
+                        }
+                        {
+                            (location.pathname === '/vd' || location.pathname === '/ph') &&
+                            <>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Тип завяки</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={type}
+                                        label="Тип завяки"
+                                        onChange={(e) => setType(e.target.value)}
+                                        sx={{ marginBottom: 2 }}
+                                    >
+                                        <MenuItem value={'Брак'}>Брак</MenuItem>
+                                        <MenuItem value={'Недопоставка'}>Недопоставка</MenuItem>
+                                        <MenuItem value={'Пересорт'}>Пересорт</MenuItem>
+                                        <MenuItem value={'Обычный'}>Обычный</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Категория</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={categoryId}
+                                        label="Категория"
+                                        onChange={(e) => setCategoryId(e.target.value)}
+                                        sx={{ marginBottom: 2 }}
+                                    >
+                                        {categories.map(category => (
+                                            <MenuItem value={category.id}>{category.name}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Аттребуты</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={attributeId}
+                                        label="Аттребуты"
+                                        onChange={(e) => setAttributeId(e.target.value)}
+                                        sx={{ marginBottom: 2 }}
+                                    >
+                                        {attributes.map(category => (
+                                            <MenuItem value={category.id}>{category.name}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Город</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={city}
+                                        label="Город"
+                                        onChange={(e) => setCity(e.target.value)}
+                                        sx={{ marginBottom: 2 }}
+                                    >
+                                        <MenuItem value={'Актобе'}>Актобе</MenuItem>
+                                        <MenuItem value={'Алмата'}>Алмата</MenuItem>
+                                        <MenuItem value={'Астана'}>Астана</MenuItem>
+                                        <MenuItem value={'Караганда'}>Караганда</MenuItem>
+                                        <MenuItem value={'Костанай'}>Костанай</MenuItem>
+                                        <MenuItem value={'Павлодар'}>Павлодар</MenuItem>
+                                        <MenuItem value={'Семей'}>Семей</MenuItem>
+                                        <MenuItem value={'Усть-Каменогорск'}>Усть-Каменогорск</MenuItem>
+                                        <MenuItem value={'Шымкент'}>Шымкент</MenuItem>
+                                        <MenuItem value={'Экибастуз'}>Экибастуз</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <TextField
+                                    fullWidth
+                                    label="Номер тр. Единицы"
+                                    value={units}
+                                    onChange={(e) => setUnits(e.target.value)}
+                                    sx={{ marginBottom: 2 }}
+                                />
+                                <TextField
+                                    fullWidth
+                                    label="Поставщик"
+                                    value={supplier}
+                                    onChange={(e) => setSupplier(e.target.value)}
+                                    sx={{ marginBottom: 2 }}
+                                />
+                                <TextField
+                                    fullWidth
+                                    label="Сопр. Документы"
+                                    value={doc}
+                                    onChange={(e) => setDoc(e.target.value)}
+                                    sx={{ marginBottom: 2 }}
+                                />
+                                <TextField
+                                    fullWidth
+                                    disabled
+                                    label="Формат"
+                                    value={format == 'video' ? 'Видео' : 'Фото'}
+                                    onChange={(e) => setFormat(e.target.value)}
+                                    sx={{ marginBottom: 2 }}
+                                />
+                                {format == 'video' ? (
+                                    haveImage ? (
+                                        <video
+                                            style={{ width: '100%', paddingBottom: '2rem' }}
+                                            controls
+                                            poster={host + preview}
+                                        >
+                                            <source
+                                                src={host + file}
+                                                type="video/mp4"
+                                            />
+                                        </video>
+                                    ) : (
+                                        <>
+                                            <Button
+                                                component="label"
+                                                role={undefined}
+                                                sx={{ marginBottom: 2, width: '100%' }}
+                                                variant="contained"
+                                                tabIndex={-1}
+                                                startIcon={<CloudUploadIcon />}
+                                            >
+                                                Загрузить видео
+                                                <VisuallyHiddenInput
+                                                    type="file"
+                                                    onChange={(e) => setFile(e.target.files[0])}
+                                                    multiple
+                                                />
+                                            </Button>
+                                            <Button
+                                                component="label"
+                                                role={undefined}
+                                                sx={{ marginBottom: 2, width: '100%' }}
+                                                variant="contained"
+                                                color="warning"
+                                                tabIndex={-1}
+                                                startIcon={<CloudUploadIcon />}
+                                            >
+                                                Загрузить обложку
+                                                <VisuallyHiddenInput
+                                                    type="file"
+                                                    onChange={(e) => setPreview(e.target.files[0])}
+                                                    multiple
+                                                />
+                                            </Button>
+                                        </>
+                                    )
                                 ) : (
-                                    <>
+                                    haveImage ? (
+                                        <img style={{ width: '100%', paddingBottom: '2rem' }} src={host + file} alt="" />
+                                    ) : (
                                         <Button
                                             component="label"
                                             role={undefined}
@@ -492,76 +530,40 @@ export default function StickyHeadTable({ rows, columns }) {
                                             tabIndex={-1}
                                             startIcon={<CloudUploadIcon />}
                                         >
-                                            Загрузить видео
+                                            Загрузить фото
                                             <VisuallyHiddenInput
                                                 type="file"
                                                 onChange={(e) => setFile(e.target.files[0])}
                                                 multiple
                                             />
                                         </Button>
-                                        <Button
-                                            component="label"
-                                            role={undefined}
-                                            sx={{ marginBottom: 2, width: '100%' }}
-                                            variant="contained"
-                                            color="warning"
-                                            tabIndex={-1}
-                                            startIcon={<CloudUploadIcon />}
-                                        >
-                                            Загрузить обложку
-                                            <VisuallyHiddenInput
-                                                type="file"
-                                                onChange={(e) => setPreview(e.target.files[0])}
-                                                multiple
-                                            />
-                                        </Button>
-                                    </>
-                                )
-                            ) : (
-                                haveImage ? (
-                                    <img style={{ width: '100%', paddingBottom: '2rem' }} src={host + file} alt="" />
-                                ) : (
-                                    <Button
-                                        component="label"
-                                        role={undefined}
-                                        sx={{ marginBottom: 2, width: '100%' }}
-                                        variant="contained"
-                                        tabIndex={-1}
-                                        startIcon={<CloudUploadIcon />}
-                                    >
-                                        Загрузить фото
-                                        <VisuallyHiddenInput
-                                            type="file"
-                                            onChange={(e) => setFile(e.target.files[0])}
-                                            multiple
-                                        />
-                                    </Button>
-                                )
-                            )}
-                            <TextField
-                                fullWidth
-                                label="Комментарий"
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                sx={{ marginBottom: 2 }}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Ответственный"
-                                value={responsible}
-                                onChange={(e) => setResponsible(e.target.value)}
-                                sx={{ marginBottom: 2 }}
-                            />
-                        </>
-                    }
-                    <Button onClick={handleSave} variant="contained" color="primary" sx={{ mr: 1 }}>
-                        Сохранить
-                    </Button>
-                    <Button onClick={() => setOpenModal(false)} variant="outlined">
-                        Отменить
-                    </Button>
-                </Paper>
-            </Modal>
-        </Paper>
+                                    )
+                                )}
+                                <TextField
+                                    fullWidth
+                                    label="Комментарий"
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                    sx={{ marginBottom: 2 }}
+                                />
+                                <TextField
+                                    fullWidth
+                                    label="Ответственный"
+                                    value={responsible}
+                                    onChange={(e) => setResponsible(e.target.value)}
+                                    sx={{ marginBottom: 2 }}
+                                />
+                            </>
+                        }
+                        <Button onClick={handleSave} variant="contained" color="primary" sx={{ mr: 1 }}>
+                            Сохранить
+                        </Button>
+                        <Button onClick={() => setOpenModal(false)} variant="outlined">
+                            Отменить
+                        </Button>
+                    </Paper>
+                </Modal>
+            </Paper>
+        </LoadingIndicator>
     );
 }

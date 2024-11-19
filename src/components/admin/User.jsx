@@ -43,6 +43,7 @@ const Users = () => {
         setOpenModal(true);
     }
     const handleSave = () => {
+        setLoading(true);
         const data = {
             name,
             email,

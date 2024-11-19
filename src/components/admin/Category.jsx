@@ -35,6 +35,7 @@ const Category = () => {
     setOpenModal(true);
   }
   const handleSave = () => {
+    setLoading(true);
     const data = {
       name,
     }

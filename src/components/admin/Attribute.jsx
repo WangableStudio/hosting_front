@@ -45,6 +45,7 @@ const Attribute = () => {
     setOpenModal(true);
   }
   const handleSave = () => {
+    setLoading(true)
     const data = {
       name,
       categoryId
