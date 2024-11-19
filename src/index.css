@@ -1,8 +1,9 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -15,11 +16,9 @@ code {
     monospace;
 }
 
-.title{
-  padding-top: 50px;
+.title {
   font-size: 34pt;
   font-weight: 600;
-  margin-bottom: 20px;
 }
 
 .container {

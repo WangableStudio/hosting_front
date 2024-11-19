@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { TextField } from '@mui/material';
 import axios from 'axios'
 import { toast } from "react-hot-toast";
-import host from '../host/index';
+import { host } from '../host/index';
 
 const style = {
     position: 'absolute',
@@ -49,7 +49,7 @@ const Login = () => {
                     window.location.href = '/'
                 }, 1000)
             }).catch(error => {
-               
+
             })
     }
     return (

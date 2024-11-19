@@ -14,10 +14,10 @@ const AdminNavbar = () => {
                 <NavLink to="/attribute">
                     <p className="nav_cont">Аттребуты</p>
                 </NavLink>
-                <NavLink to="/video">
+                <NavLink to="/vd">
                     <p className="nav_cont">Видео</p>
                 </NavLink>
-                <NavLink to="/photo">
+                <NavLink to="/ph">
                     <p className="nav_cont">Фото</p>
                 </NavLink>
             </div>

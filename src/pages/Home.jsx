@@ -1,51 +1,46 @@
-import React from 'react'
-import CustomCard from '../components/card/CustomCard'
-import { Pagination } from '@mui/material'
-const Home = () => {
-  const data = [
-    {
-      id: 1,
-      name: 'John'
-    },
-    {
-      id: 2,
-      name: 'Jane'
-    },
-    {
-      id: 3,
-      name: 'Jane'
-    },
-    {
-      id: 4,
-      name: 'Jane'
-    },
-    {
-      id: 5,
-      name: 'Jane'
-    },
-    {
-      id: 6,
-      name: 'Jane'
-    },
-    {
-      id: 7,
-      name: 'Jane'
-    }
-  ]
-  return (
-    <>
-      <div className="cards">
-        {data.map((item, index) => {
-          return (
-            <CustomCard key={index} item={item} />
-          )
-        })}
-      </div>
-      <div className="pagination">
-        <Pagination count={10} />
-      </div>
-    </>
-  )
-}
+// Home.js
+import React, { useEffect, useState } from 'react';
+import CustomCard from '../components/card/CustomCard';
+import { Pagination } from '@mui/material';
+import axios from 'axios';
+import { host } from '../components/host';
+import { useFilters } from '../components/context/FilterContext'; // Импортируем useFilters
 
-export default Home
+const Home = () => {
+    const { filters } = useFilters(); // Получаем фильтры из контекста
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const { type, categories, attributes, searchQuery } = filters;
+
+        const params = {
+            type,
+            categories: categories.join(','),
+            attributes: attributes.join(','),
+            search: searchQuery
+        };
+
+        axios.get(`${host}/api/v1/media/photo`, { params })
+            .then((response) => {
+                setData(response.data);
+            })
+            .catch((error) => {
+                console.error("Ошибка при запросе:", error);
+            });
+    }, [filters]);
+
+    return (
+        <>
+            <div className="cards">
+                {data.map((item, index) => (
+                    <CustomCard key={index} item={item} />
+                ))}
+            </div>
+            {/* <div className="pagination">
+                <Pagination count={10} />
+            </div> */}
+        </>
+    );
+};
+
+export default Home;

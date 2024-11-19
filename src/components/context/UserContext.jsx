@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import host from '../host';
+import { host, token } from '../host';
 
 // Создаем контекст
 export const UserContext = createContext();
@@ -10,7 +10,6 @@ export const UserProvider = ({ children }) => {
 
     useEffect(() => {
         const checkUserRole = async () => {
-            const token = localStorage.getItem('token');
             if (!token) return;
             axios.post(`${host}/api/v1/user/auth`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
