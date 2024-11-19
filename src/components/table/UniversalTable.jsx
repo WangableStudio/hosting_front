@@ -372,7 +372,7 @@ export default function StickyHeadTable({ rows, columns }) {
                             </>
                         }
                         {
-                            (location.pathname === '/vd' || location.pathname === '/ph') &&
+                            (location.pathname === '/vd' || location.pathname === '/ph' || location.pathname === '/user/vd' || location.pathname === '/user/ph') &&
                             <>
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Тип завяки</InputLabel>
