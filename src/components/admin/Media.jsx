@@ -122,7 +122,7 @@ const Media = () => {
                     marginTop: '20px',
                     marginBottom: '20px',
                 }}>
-                    <div className="title" ><span>Аттребуты</span></div>
+                    <div className="title" ><span>{location.pathname === '/vd' ? 'Видео' : 'Фото'}</span></div>
                     <Button onClick={handleAdd} variant="contained" color="secondary">
                         Добавить нововое {location.pathname === '/vd' ? 'видео' : 'фото'}
                     </Button>
