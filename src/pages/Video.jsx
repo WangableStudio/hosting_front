@@ -27,7 +27,9 @@ const Video = () => {
       })
       .catch((error) => {
         console.error("Ошибка при запросе:", error);
-      });
+      }).finally(() => {
+        setLoading(false);
+      })
   }, [filters]);
   return (
     <LoadingIndicator loading={loading}>
