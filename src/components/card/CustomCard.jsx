@@ -64,7 +64,7 @@ export default function CustomCard({ item }) {
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
+            {item.user.name.charAt(0).toUpperCase()}
           </Avatar>
         }
         // action={

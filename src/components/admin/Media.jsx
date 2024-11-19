@@ -10,6 +10,7 @@ import { toast } from 'react-hot-toast';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import styled from '@emotion/styled';
 import { useLocation } from 'react-router-dom';
+import LoadingIndicator from '../LoadingIndicator';
 
 const columns = [
     { id: 'id', label: 'ID', minWidth: 100 },
@@ -50,6 +51,7 @@ const Media = () => {
     const [responsible, setResponsible] = useState('')
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`${host}/api/v1/attribute`).then((response) => {
@@ -66,6 +68,7 @@ const Media = () => {
     }, [])
 
     useEffect(() => {
+        setLoading(true)
         setFormat(location.pathname === '/vd' ? 'video' : 'photo')
         axios.get(`${host}/api/v1/media/${location.pathname === '/vd' ? 'video' : 'photo'}`)
             .then((response) => {
@@ -73,7 +76,9 @@ const Media = () => {
             })
             .catch((error) => {
                 console.error("Ошибка при запросе:", error);
-            });
+            }).finally(() => {
+                setLoading(false);
+            })
     }, [location.pathname]);
 
     const handleAdd = () => {
@@ -110,7 +115,7 @@ const Media = () => {
     }
 
     return (
-        <>
+        <LoadingIndicator loading={loading}>
             <AdminNavbar />
             <div className="container">
                 <Box sx={{
@@ -318,7 +323,7 @@ const Media = () => {
                     </Button>
                 </Paper>
             </Modal>
-        </>
+        </LoadingIndicator>
     )
 }
 

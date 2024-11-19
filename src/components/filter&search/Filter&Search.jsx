@@ -117,6 +117,7 @@ export default function FilterSearch() {
                 <DialogContent sx={{
                     padding: '0px 24px',
                     display: 'flex',
+                    overflowY: 'clip',
                     justifyContent: 'start',
                     flexDirection: 'column',
                     flexWrap: 'wrap',

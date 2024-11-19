@@ -7,6 +7,7 @@ import StickyHeadTable from '../table/UniversalTable';
 import AdminNavbar from './navbar/AdminNavbar';
 import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select, TextField } from '@mui/material';
 import { toast } from 'react-hot-toast';
+import LoadingIndicator from '../LoadingIndicator';
 
 const columns = [
     { id: 'id', label: 'ID', minWidth: 170 },
@@ -22,15 +23,19 @@ const Users = () => {
     const [openModal, setOpenModal] = useState(false);
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [loading, setLoading] = useState(true);
     const [password, setPassword] = useState('')
     const [status, setStatus] = useState('')
     useEffect(() => {
+        setLoading(true);
         axios.get(`${host}/api/v1/user/users`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then((response) => {
             setUsers(response.data)
         }).catch(error => {
             console.log(error);
+        }).finally(() => {
+            setLoading(false);
         })
     }, [])
 
@@ -57,7 +62,7 @@ const Users = () => {
     };
 
     return (
-        <>
+        <LoadingIndicator loading={loading}>
             <AdminNavbar />
             <div className="container">
                 <Box sx={{
@@ -127,7 +132,7 @@ const Users = () => {
                     </Button>
                 </Paper>
             </Modal>
-        </>
+        </LoadingIndicator>
     )
 }
 

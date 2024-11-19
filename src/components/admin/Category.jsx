@@ -6,6 +6,7 @@ import AdminNavbar from './navbar/AdminNavbar';
 import { toast } from 'react-hot-toast';
 import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select, TextField } from '@mui/material';
 import { host, token } from '../host';
+import LoadingIndicator from '../LoadingIndicator';
 
 const columns = [
   { id: 'id', label: 'ID', minWidth: 170 },
@@ -17,12 +18,16 @@ const Category = () => {
   const [categories, setCategories] = useState([])
   const [openModal, setOpenModal] = useState(false);
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     axios.get(`${host}/api/v1/category`).then((response) => {
       setCategories(response.data)
     }).catch(error => {
       console.log(error);
+    }).finally(() => {
+      setLoading(false);
     })
   }, [])
 
@@ -43,7 +48,7 @@ const Category = () => {
     })
   }
   return (
-    <>
+    <LoadingIndicator loading={loading}>
       <AdminNavbar />
       <div className="container">
         <Box sx={{
@@ -84,7 +89,7 @@ const Category = () => {
           </Button>
         </Paper>
       </Modal>
-    </>
+    </LoadingIndicator>
   )
 }
 

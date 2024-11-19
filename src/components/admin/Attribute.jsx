@@ -7,6 +7,7 @@ import StickyHeadTable from '../table/UniversalTable';
 import AdminNavbar from './navbar/AdminNavbar';
 import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select, TextField } from '@mui/material';
 import { toast } from 'react-hot-toast';
+import LoadingIndicator from '../LoadingIndicator';
 
 const columns = [
   { id: 'id', label: 'ID', minWidth: 170 },
@@ -21,19 +22,23 @@ const Attribute = () => {
   const [categoryId, setCategoryId] = useState('')
   const [openModal, setOpenModal] = useState(false);
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     axios.get(`${host}/api/v1/attribute`).then((response) => {
       setAttributes(response.data)
+      axios.get(`${host}/api/v1/category`).then((response) => {
+        setCategory(response.data)
+      }).catch(error => {
+        console.log(error);
+      }).finally(() => {
+        setLoading(false);
+      })
     }).catch(error => {
       console.log(error);
     })
 
-    axios.get(`${host}/api/v1/category`).then((response) => {
-      setCategory(response.data)
-    }).catch(error => {
-      console.log(error);
-    })
   }, [])
 
   const handleAdd = () => {
@@ -55,7 +60,7 @@ const Attribute = () => {
   }
 
   return (
-    <>
+    <LoadingIndicator loading={loading}>
       <AdminNavbar />
       <div className="container">
         <Box sx={{
@@ -111,7 +116,7 @@ const Attribute = () => {
           </Button>
         </Paper>
       </Modal>
-    </>
+    </LoadingIndicator>
   )
 }
 
