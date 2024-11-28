@@ -1,0 +1,248 @@
+.home {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 228px 1fr;
+    padding-left: 200px;
+    padding-right: 200px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    gap: 10px;
+    margin: 0 auto;
+}
+
+.sitebar {
+    display: flex;
+    background-color: #f7f7f7;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+}
+
+.sitebar__title {
+    width: 100%;
+    display: flex;
+    padding: 5px;
+    align-items: center;
+    justify-content: center;
+    background-color: #AF2C30;
+}
+
+.sitebar__title p {
+    font-size: 16px;
+    line-height: 1.3em;
+    text-align: center;
+    color: #EEF1E5;
+}
+
+.sitebar__filter {
+    width: 100%;
+    margin-top: 20px;
+    padding: 0px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sitebar__filter-inp {
+    width: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.content {
+    width: 100%;
+    background-color: #f7f7f7;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+
+.content__filter {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 20px;
+}
+
+.content__filter p {
+    font-size: 13px;
+    cursor: pointer;
+    color: rgb(51, 51, 51);
+    line-height: 1.3em;
+    text-decoration: underline;
+}
+
+.content__cards {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    min-height: 416px;
+}
+
+.content__card {
+    width: 100%;
+    height: 198px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+    background-color: #FFF;
+}
+
+.content__card-number {
+    width: 100%;
+    min-height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(77, 77, 77);
+    color: #EEF1E5;
+}
+
+.content__card-number p {
+    font-size: 11px;
+    line-height: 1.3em;
+    text-decoration: underline;
+}
+
+.content__card-desc {
+    width: 100%;
+    padding: 10px 20px;
+    gap: 2px;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.content__card-desc p {
+    font-size: 11px;
+    line-height: 1.3em;
+    color: rgb(51, 51, 51);
+}
+
+.content__card-desc p span {
+    font-weight: 700;
+}
+
+.content__title{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.content__title p{
+    font-size: 25px;
+    line-height: 1.3em;
+    font-weight: bold;
+    color: rgb(51,51,51);
+    letter-spacing: 0.01em;
+}
+
+
+.act {
+    width: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+}
+.act h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.act p {
+    font-weight: bold;
+    color: rgb(51,51,51);
+    letter-spacing: 0.05em;
+    font-size: 10px;
+}
+.act .label {
+    font-weight: 500;
+}
+.sitebar__filter-btn{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+.content__images{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.content__images img{
+    width: 100%;
+}
+
+.pagination{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.pagination button{
+    background-color: #00000000;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+@media(max-width:991px) {
+    .home {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+}
+
+@media(max-width: 750px) {
+    .home {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .content__cards {
+        grid-template-columns: 1fr;
+    }
+    .content{
+        padding: 10px !important;
+    }
+}
+
+@media(max-width:550px) {
+    .home {
+        display: flex;
+        flex-direction: column;
+        padding-top: 0px;
+    }
+
+    .content__cards {
+        grid-template-columns: 1fr 1fr;
+    }
+    .sitebar__filter-btn{
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+@media(max-width:450px){
+    .content__cards {
+        grid-template-columns: 1fr;
+    }
+}

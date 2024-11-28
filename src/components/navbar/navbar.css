@@ -1,0 +1,117 @@
+.navbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(175, 44, 48);
+    padding-left: 200px;
+    padding-right: 200px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.navbar.bottom{
+    background-color: #FFFF;
+}
+
+.navbar__logo {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+}
+
+.navbar__logo p {
+    letter-spacing: 0.01em;
+    color: #EEF1E5;
+    font-size: 16px;
+    line-height: 1.3em;
+    margin-left: 30px;
+}
+
+.navbar__user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.navbar__user svg {
+    font-size: 40px;
+    color: #EEF1E5;
+}
+
+.navbar__user p {
+    letter-spacing: 0.01em;
+    color: #EEF1E5;
+    font-size: 16px;
+    line-height: 1.3em;
+}
+
+.search{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid #AF2C30;
+    overflow: hidden;
+}
+.search input{
+    width: 100%;
+    padding-left: 20px;
+    outline: none;
+    height: 40px;
+    border: none;
+}
+.search__button{
+    width: 50px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #AF2C30;
+}
+.search__button svg{
+    font-size: 25px;
+    color: #FFF;
+}
+
+@media(max-width:991px) {
+    .navbar {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+}
+
+@media(max-width: 750px) {
+    .navbar {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .navbar__logo {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: start;
+        gap: 10px;
+    }
+    .navbar__logo p{
+        margin-left: 0px;
+    }
+    
+    .navbar__logo > * {
+        flex: 10% 10% 45%;
+    }
+    .navbar__logo img{
+        width: 20%;
+    }
+    .navbar.bottom{
+        flex-direction: column;
+        gap: 10px;
+    }
+    .navbar.bottom .btn{
+        width: 100%;
+        max-width: 400px;
+    }
+    .navbar.bottom .search{
+        max-width: 400px;
+        width: 100%;
+    }
+}
